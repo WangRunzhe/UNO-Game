@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style type="text/css">
+            #onhand,#drawcard
+            {float:left; margin:10px;padding:10px;border:1px solid #aaaaaa;}
+            #ondeck
+            {float:left; width:400px; height:800px; margin:10px;padding:10px;border:1px solid #aaaaaa;}
+        </style>
+        <script src="lib/handlebars-v4.0.5.js"></script>
+        <script src="lib/jquery-2.2.0.js"></script>
+
+        <script src="creategame.js"></script>
+
+
+        <script id="card-template" type="application/x-handlebars">
+            <div style="display:inline" data-drag id={{cid}} class="ui-widget-content" 
+            style="width: 170px; height: 256px">
+            <img src="uno_deck/{{cid}}.png" draggable="true" 
+            ondragstart="drag(event)" id={{cid}} />
+            </div>
+        </script>
+
+        <script id="draw-template" type="application/x-handlebars">
+            <div data-drag id={{did}} class="ui-widget-content" 
+            style="width: 170px; height: 256px">
+            <img src="uno_deck/back.png" draggable="true" 
+            ondragstart="drag(event)" id={{did}} />
+            </div>
+        </script>
+
+        <script type="text/javascript">
+function allowDrop(ev)
+{
+    ev.preventDefault();
+}
+
+function drag(ev)
+{
+    ev.dataTransfer.setData("Text", ev.target.id);
+}
+
+function drop(ev)
+{
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("Text");
+    $("#tablecard").attr("src", "uno_deck/" + data + ".png");
+    $("#tablecardid").val(data);
+    $('#' + data).fadeOut('fast');
+
+}
+
+function draw(ev)
+{
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("Text");
+
+    var drawcard = Handlebars.compile($("#card-template").html());
+    $("#drawcards").append(drawcard({cid: data}));
+
+}
+
+        </script>
+    </head>
+    <body>
+        
+
+        <div id="creategame" align="center">
+
+            Description: 
+            <input type="text"  id="destxt" size="30" />
+            <br> <br>
+
+            Game ID:
+            <input type="text" id="gameid" size="30"/>
+            <br> <br>
+
+            Player Number:
+            <input type="number" id="playernum" size="30" min="2" max="12" />
+            <br> <br>
+
+            <button type="button" id="createBtn">Create Game</button> 
+        </div>
+
+
+        <!--div update the style here 1.26-->
+        <div id="waiting" style="text-align:center"> 
+            <h1 align="center">Waiting for game to start...</h1>
+            <br> <br>
+            <!--            update here 1.26-->
+            <h2 id="showgameinfo" align="center"></h2>  
+            <br> 
+            <h2 id="showgameid" align="center"></h2>  
+            <br> 
+            <h2 align="center">Joined Sequence: 1</h2>  
+            <br> 
+            <h2 id="showplayernum" align="center"></h2>  
+            <br> 
+            
+
+            <!--            屋主可以click start game-->
+            <Button type="button" id="startgameBtn">Start Game</button> 
+        </div>
+
+        <div id="onhand" ondrop="draw(event)" ondragover="allowDrop(event)">
+
+            Cards On Hand: 
+
+            <div id="cards"></div>
+            <div id="drawcards"></div>
+        </div>
+
+
+        <div id="ondeck" ondrop="drop(event)" ondragover="allowDrop(event)">
+
+            Deck: <br>
+            <textarea id="tablecardid"></textarea>
+            <button type="button" id="sendBtn">Send card!</button>
+            <img id="tablecard" src="" draggable="false">
+        </div>
+
+        <div id="drawcard">
+            Draw: <br>
+            <img id="drawBtn" src="uno_deck/back.png" draggable="false">
+            <div id="draw">
+            </div>
+        </div>
+
+        <!--
+        <div id="playgame" align="center">
+            HandCards:<h3 id="nowcard" > </h3>
+            <br>
+            Sending Card ID:
+            <input type="text" id="sendCardID" size="30">
+            <button type="button" id="sendBtn">Send card!</button>
+
+            <br>
+            Draw a card:
+            <button type="button" id="drawBtn">Draw card!</button>
+            <br>
+            Show Card is:
+            <h3 id="showcard"></h3>
+        </div>
+        -->
+    </body>
+</html>
